@@ -8,22 +8,24 @@
 
 ### Example:
 
+    // Using an image
     <hook-picture>
       <hook-picture-source src="http://placehold.it/1000x150" media="(min-width: 1000px)" name="desktop"></hook-picture-source>
       <hook-picture-source src="http://placehold.it/600x150" media="(min-width: 600px)" name="tablet"></hook-picture-source>
       <img src="http://placehold.it/350x150" alt="Test" default>
     </hook-picture>
 
+    // Using an iron image
     <hook-picture>
       <hook-picture-source src="http://placehold.it/1000x150" media="(min-width: 1000px)" name="desktop"></hook-picture-source>
       <hook-picture-source src="http://placehold.it/600x150" media="(min-width: 600px)" name="tablet"></hook-picture-source>
       <iron-image src="http://placehold.it/350x150" alt="Test" default></iron-image>
     </hook-picture>
 
-    <hook-picture>
+    // Using a background image
+    <hook-picture src="http://placehold.it/350x150">
       <hook-picture-source src="http://placehold.it/1000x150" media="(min-width: 1000px)" name="desktop"></hook-picture-source>
       <hook-picture-source src="http://placehold.it/600x150" media="(min-width: 600px)" name="tablet"></hook-picture-source>
-      <hook-picture-source src="http://placehold.it/350x150" media="(min-width: 350px)" name="tablet"></hook-picture-source>
     </hook-picture>
 
 ### Styling
@@ -54,7 +56,6 @@ Custom property | Description | Default
     </style>
 
     <content select="[default]"></content>
-    <div id="background" style$="background-image: url( {{backgroundImageSrc}} ); background-size: cover;"></div>
 
   </template>
 
@@ -93,16 +94,22 @@ Custom property | Description | Default
         backgroundImageSrc: String,
 
         /**
-         * Calculated background image div width
+         * Calculated background image div width.
          * @type {number}
          */
         backgroundImageWidth: Number,
 
         /**
-         * Calculated background image div height
+         * Calculated background image div height.
          * @type {number}
          */
-        backgroundImageHeight: Number
+        backgroundImageHeight: Number,
+
+        /**
+         * Source attribute for binding to background image.
+         * @type {String}
+         */
+        src: String
 
       },
 
@@ -129,7 +136,7 @@ Custom property | Description | Default
       _onResize: function() {
         if(this.image) {
           this._queryMatchChangedImage();
-        } else {
+        } else if(this.src) {
           this._queryMatchChangedBackground();
         }
       },
@@ -147,7 +154,8 @@ Custom property | Description | Default
         if(this.image) {
           this.fallback = this.image.src;
           this._queryMatchChangedImage();
-        } else {
+        } else if(this.src) {
+          this.fallback = this.src;
           this._queryMatchChangedBackground();
         }
       },
@@ -193,11 +201,14 @@ Custom property | Description | Default
 
           if(this.params[i].queryMatches === true) {
             this.backgroundImageSrc = this.params[i].src;
-            this._setDimensions(this.backgroundImageSrc);
+            this._setBackgroundImage(this.backgroundImageSrc);
             break;
+          } else if( this._checkDefault(this.params) ) {
+            this.backgroundImageSrc = this.fallback;
+            this._setBackgroundImage(this.backgroundImageSrc);
           } else {
             this.backgroundImageSrc= this.params[i].src;
-            this._setDimensions(this.backgroundImageSrc);
+            this._setBackgroundImage(this.backgroundImageSrc);
           }
 
         }
@@ -205,16 +216,16 @@ Custom property | Description | Default
 
       /**
        * Create an image and calculate the width and height for the background image
-       * and then set those properties once calculated
+       * and then set those properties and the source of the background image
+       * once calculated.
        * @param  {string} source the current source attribtue for the background image
        */
-      _setDimensions: function(source) {
+      _setBackgroundImage: function(source) {
         var img = new Image();
-        var bgDiv = this.$.background;
+        var background = this;
         img.src = source;
         img.onload = function() {
-          bgDiv.style.width = this.width + 'px';
-          bgDiv.style.height = this.height + 'px';
+          background.setAttribute('style', 'background-image: url('+source+'); background-size: cover; width: '+this.width+'px; height: '+this.height+'px;');
         }
       },
 
