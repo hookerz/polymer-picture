@@ -21,22 +21,27 @@
       <h3>Basic hook-picture Demo</h3>
       <demo-snippet>
         <template>
-          <!-- <hook-picture>
-            <hook-picture-source src="http://placehold.it/1000x150" media="(min-width: 1000px)" name="desktop"></hook-picture-source>
-            <hook-picture-source src="http://placehold.it/600x150" media="(min-width: 600px)" name="tablet"></hook-picture-source>
-            <img src="http://placehold.it/350x150" alt="Test" default>
-          </hook-picture> -->
 
-          <!-- <hook-picture>
-            <hook-picture-source src="http://placehold.it/1000x150" media="(min-width: 1000px)" name="desktop"></hook-picture-source>
-            <hook-picture-source src="http://placehold.it/600x150" media="(min-width: 600px)" name="tablet"></hook-picture-source>
-            <iron-image src="http://placehold.it/350x150" alt="Test" default></iron-image>
-          </hook-picture> -->
-
-          <hook-picture src="http://placehold.it/350x150">
-            <hook-picture-source src="http://placehold.it/1000x150" media="(min-width: 1000px)" name="desktop"></hook-picture-source>
-            <hook-picture-source src="http://placehold.it/600x150" media="(min-width: 600px)" name="tablet"></hook-picture-source>
+          <h1>Regular Image</h1>
+          <hook-picture>
+            <hook-picture-source src="http://placehold.it/1000x150" media="(min-width: 1000px)"></hook-picture-source>
+            <hook-picture-source src="http://placehold.it/600x150" media="(min-width: 600px)"></hook-picture-source>
+            <img src="http://placehold.it/350x150" alt="image" default>
           </hook-picture>
+
+          <h1>Iron Image</h1>
+          <hook-picture>
+            <hook-picture-source src="http://placehold.it/1000x150" media="(min-width: 1000px)"></hook-picture-source>
+            <hook-picture-source src="http://placehold.it/600x150" media="(min-width: 600px)"></hook-picture-source>
+            <iron-image src="http://placehold.it/350x150" alt="image" default></iron-image>
+          </hook-picture>
+
+          <h1>Background Image</h1>
+          <hook-picture src="http://placehold.it/350x150">
+            <hook-picture-source src="http://placehold.it/1000x150" media="(min-width: 1000px)"></hook-picture-source>
+            <hook-picture-source src="http://placehold.it/600x150" media="(min-width: 600px)"></hook-picture-source>
+          </hook-picture>
+          
         </template>
       </demo-snippet>
     </div>
