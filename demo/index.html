@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+  <head>
+    <title>hook-picture demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../iron-image/iron-image.html">
+
+    <link rel="import" href="../hook-picture.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+    </style>
+  </head>
+  <body>
+
+    <div class="vertical-section-container">
+      <h3>Basic hook-picture Demo</h3>
+      <demo-snippet>
+        <template>
+          <!-- <hook-picture>
+            <hook-picture-source src="http://placehold.it/1000x150" media="(min-width: 1000px)" name="desktop"></hook-picture-source>
+            <hook-picture-source src="http://placehold.it/600x150" media="(min-width: 600px)" name="tablet"></hook-picture-source>
+            <img src="http://placehold.it/350x150" alt="Test" default>
+          </hook-picture> -->
+
+          <!-- <hook-picture>
+            <hook-picture-source src="http://placehold.it/1000x150" media="(min-width: 1000px)" name="desktop"></hook-picture-source>
+            <hook-picture-source src="http://placehold.it/600x150" media="(min-width: 600px)" name="tablet"></hook-picture-source>
+            <iron-image src="http://placehold.it/350x150" alt="Test" default></iron-image>
+          </hook-picture> -->
+
+          <hook-picture>
+            <hook-picture-source src="http://placehold.it/1000x150" media="(min-width: 1000px)" name="desktop"></hook-picture-source>
+            <hook-picture-source src="http://placehold.it/600x150" media="(min-width: 600px)" name="tablet"></hook-picture-source>
+            <hook-picture-source src="http://placehold.it/350x150" media="(min-width: 350px)" name="tablet"></hook-picture-source>
+          </hook-picture>
+        </template>
+      </demo-snippet>
+    </div>
+
+  </body>
+</html>

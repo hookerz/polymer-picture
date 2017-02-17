@@ -1,0 +1,242 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-image/iron-image.html">
+<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html">
+<link rel="import" href="hook-picture-source.html">
+
+<!--
+`<hook-picture>` is a picture element that mimics the HTML5 `<picture>` element.  Use iron-image, img or don't include an image to use a div with a background-image.  Just include what media queries you wish to use and the element will adjust to your needs.
+
+### Example:
+
+    <hook-picture>
+      <hook-picture-source src="http://placehold.it/1000x150" media="(min-width: 1000px)" name="desktop"></hook-picture-source>
+      <hook-picture-source src="http://placehold.it/600x150" media="(min-width: 600px)" name="tablet"></hook-picture-source>
+      <img src="http://placehold.it/350x150" alt="Test" default>
+    </hook-picture>
+
+    <hook-picture>
+      <hook-picture-source src="http://placehold.it/1000x150" media="(min-width: 1000px)" name="desktop"></hook-picture-source>
+      <hook-picture-source src="http://placehold.it/600x150" media="(min-width: 600px)" name="tablet"></hook-picture-source>
+      <iron-image src="http://placehold.it/350x150" alt="Test" default></iron-image>
+    </hook-picture>
+
+    <hook-picture>
+      <hook-picture-source src="http://placehold.it/1000x150" media="(min-width: 1000px)" name="desktop"></hook-picture-source>
+      <hook-picture-source src="http://placehold.it/600x150" media="(min-width: 600px)" name="tablet"></hook-picture-source>
+      <hook-picture-source src="http://placehold.it/350x150" media="(min-width: 350px)" name="tablet"></hook-picture-source>
+    </hook-picture>
+
+### Styling
+
+The following custom properties and mixins are available for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--hook-picture` | Mixin applied to the element | `{}`
+
+@element hook-picture
+@demo demo/index.html
+-->
+
+<dom-module id="hook-picture">
+
+  <template>
+
+    <style>
+
+      /* Host styles */
+
+      :host {
+        display: inherit;
+        background-color: transparent;
+      }
+
+    </style>
+
+    <content select="[default]"></content>
+    <div id="background" style$="background-image: url( {{backgroundImageSrc}} ); background-size: cover;"></div>
+
+  </template>
+
+  <script>
+  (function() {
+    'use strict';
+
+    Polymer({
+
+      is: 'hook-picture',
+
+      properties: {
+
+        /**
+        * Paramaters for source and media query values passed
+        * in by hook-picture-source.
+        * @type {array}
+        */
+        params: {
+          type: Array,
+          value: function() {
+            return [];
+          }
+        },
+
+        /**
+         * Fallback string that is set on attachment to the dom.
+         * @type {string}
+         */
+        fallback: String,
+
+        /**
+         * Background image string for background image option.
+         * @type {string}
+         */
+        backgroundImageSrc: String,
+
+        /**
+         * Calculated background image div width
+         * @type {number}
+         */
+        backgroundImageWidth: Number,
+
+        /**
+         * Calculated background image div height
+         * @type {number}
+         */
+        backgroundImageHeight: Number
+
+      },
+
+      /**
+       * Element behaviors
+       * @type {Array}
+       */
+      behaviors: [
+        Polymer.IronResizableBehavior
+      ],
+
+      /**
+       * Element listeners
+       * @type {Object}
+       */
+      listeners: {
+        'iron-resize': '_onResize'
+      },
+
+      /**
+       * On resize, fire queryMatchChanged function to check and see if any images
+       * need to be swapped out because the size of the viewport has now changed.
+       */
+      _onResize: function() {
+        if(this.image) {
+          this._queryMatchChangedImage();
+        } else {
+          this._queryMatchChangedBackground();
+        }
+      },
+
+      /**
+       * Once attached to the dome, set the image property and fallback properties, then
+       * set parameters to the params array from hook-picture-source and fire queryMatchChanged
+       * function to set the right image for it's media query counterpart.
+       */
+      attached: function() {
+        this._setParams();
+
+        this.image = Polymer.dom(this).querySelector('[default]');
+
+        if(this.image) {
+          this.fallback = this.image.src;
+          this._queryMatchChangedImage();
+        } else {
+          this._queryMatchChangedBackground();
+        }
+      },
+
+      /**
+       * Setting params array by looping over all hook-picture-source elements
+       * given and setting an array of objects with source and media query keys.
+       */
+      _setParams: function() {
+        var children = Polymer.dom(this).children;
+
+        children.forEach(function(child) {
+          if(child.src && child.media) this.push('params', child);
+        }, this);
+      },
+
+      /**
+       * Check for query matches and set the respective image matched to the
+       * media query that it has been set to.
+       */
+      _queryMatchChangedImage: function() {
+        for (var i = 0; i < this.params.length; i++) {
+
+          if(this.params[i].queryMatches === true) {
+            this.image.src = this.params[i].src;
+            break;
+          } else if( this._checkDefault(this.params) ) {
+            this.image.src = this.fallback;
+          } else {
+            this.image.src = this.params[i].src;
+          }
+
+        }
+      },
+
+      /**
+       * Check for query matches and set the div and background image matched
+       * to the media query that it has been set to.
+       * @return {[type]} [description]
+       */
+      _queryMatchChangedBackground: function() {
+        for (var i = 0; i < this.params.length; i++) {
+
+          if(this.params[i].queryMatches === true) {
+            this.backgroundImageSrc = this.params[i].src;
+            this._setDimensions(this.backgroundImageSrc);
+            break;
+          } else {
+            this.backgroundImageSrc= this.params[i].src;
+            this._setDimensions(this.backgroundImageSrc);
+          }
+
+        }
+      },
+
+      /**
+       * Create an image and calculate the width and height for the background image
+       * and then set those properties once calculated
+       * @param  {string} source the current source attribtue for the background image
+       */
+      _setDimensions: function(source) {
+        var img = new Image();
+        var bgDiv = this.$.background;
+        img.src = source;
+        img.onload = function() {
+          bgDiv.style.width = this.width + 'px';
+          bgDiv.style.height = this.height + 'px';
+        }
+      },
+
+      /**
+       * Check queryMatches to see if they are true or false,
+       * if both are false - report true for fallback.
+       * @param  {array} params the params array of hook-picture-source elements.
+       * @return {boolean} true if all queryMatches are false, false if any of them are true.
+       */
+      _checkDefault: function(params) {
+        var count = [];
+
+        params.forEach(function(element) {
+          if(element.queryMatches === false) count.push(element);
+        });
+
+        return count.length === this.params.length ? true : false;
+      }
+
+    });
+
+  })();
+  </script>
+
+</dom-module>

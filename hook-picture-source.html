@@ -1,0 +1,79 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-media-query/iron-media-query.html">
+
+<!--
+`<hook-picture-source>` is a child element for hook-picture.  It's used to set a different source property depending on the media queries set.
+
+### Example:
+
+    <hook-picture-source src="mdn-logo-wid.png" media="(min-width: 600px)"></hook-picture-source>
+
+@element hook-picture-source
+@demo demo/index.html
+-->
+
+<dom-module id="hook-picture-source">
+
+  <template>
+
+    <style>
+
+      /* Host styles */
+
+      :host {
+        display: block;
+      }
+
+    </style>
+
+    <iron-media-query query="{{media}}" query-matches="{{queryMatches}}"></iron-media-query>
+
+  </template>
+
+  <script>
+  (function() {
+    'use strict';
+
+    Polymer({
+
+      is: 'hook-picture-source',
+
+      /**
+      * Element Properties
+      * @type {Object}
+      */
+
+      properties: {
+
+        /**
+        * Source attribute
+        * @type {string}
+        */
+        src: {
+          type: String,
+          value: null
+        },
+
+        /**
+        * Media query attribute
+        * @type {string}
+        */
+        media: {
+          type: String,
+          value: null
+        },
+
+        /**
+        * Boolean property for matching queries.
+        * @type {boolean}
+        */
+        queryMatches: Boolean
+
+      }
+
+    });
+
+  })();
+  </script>
+
+</dom-module>
