@@ -1,0 +1,19 @@
+{
+  "name": "hook-picture-src",
+  "version": "1.0.0",
+  "description": "",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "dom5": "^2.1.0",
+    "gulp": "^3.9.1",
+    "map-stream": "0.0.6",
+    "node-sass": "^4.5.0",
+    "parse5": "^3.0.2",
+    "through2": "^2.0.3"
+  }
+}

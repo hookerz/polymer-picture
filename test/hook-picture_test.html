@@ -8,18 +8,22 @@
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
 
-    <link rel="import" href="../hook-modal.html">
+    <link rel="import" href="../hook-picture.html">
+    <link rel="import" href="../hook-picture-source.html">
   </head>
   <body>
 
     <test-fixture id="basic">
       <template>
-        <hook-modal></hook-modal>
+        <hook-picture id="">
+          <hook-picture-source srcset="" media="(max-width: 799px)" />
+          <hook-picture-source srcset="https://baconmockup.com/800/600/" media="(min-width: 800px)" />
+        </hook-picture>
       </template>
     </test-fixture>
 
     <script>
-      suite('hook-modal', function() {
+      suite('hook-picture', function() {
 
         test('instantiating the element works', function() {
           var element = fixture('basic');

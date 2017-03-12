@@ -41,12 +41,14 @@ Custom property | Description | Default
 
   <template>
 
-    <style>:host {
-  display: inherit;
-  @apply (--hook-picture);
-}
+    <style lang="sass">
 
-/*# sourceMappingURL=data:application/json;base64,ewoJInZlcnNpb24iOiAzLAoJImZpbGUiOiAic3RkaW4uY3NzIiwKCSJzb3VyY2VzIjogWwoJCSJzdGRpbiIKCV0sCgkic291cmNlc0NvbnRlbnQiOiBbCgkJIlxuXG4gICAgICA6aG9zdCB7XG4gICAgICAgIGRpc3BsYXk6IGluaGVyaXQ7XG4gICAgICAgIEBhcHBseSgtLWhvb2stcGljdHVyZSk7XG4gICAgICB9XG5cbiAgICAiCgldLAoJIm5hbWVzIjogW10sCgkibWFwcGluZ3MiOiAiQUFFTSxBQUFBLEtBQUssQ0FBQztFQUNKLE9BQU8sRUFBRSxPQUFPO0VBQ2hCLE1BQU0sQ0FBTixnQkFBTTtDQUNQIgp9 */</style>
+      :host {
+        display: inherit;
+        @apply(--hook-picture);
+      }
+
+    </style>
 
     <slot id="slot"></slot>
 
