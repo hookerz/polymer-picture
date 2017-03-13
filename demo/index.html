@@ -4,6 +4,14 @@
     <title>hook-picture demo</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+
+    <script>
+      window.addEventListener('WebComponentsReady', function(){
+        console.log('resolved');
+        document.body.removeAttribute('unresolved');
+      });
+    </script>
+
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
 
     <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
@@ -19,11 +27,11 @@
       }
     </style>
   </head>
-  <body>
+  <body unresolved>
 
     <dom-module id="picture-test">
       <template>
-        <hook-picture src="{{src}}">
+        <hook-picture src="{{src}}" fallback-src="http://placehold.it/350x150">
           <hook-picture-source src="http://placehold.it/1000x150" media="(min-width: 1000px)"></hook-picture-source>
           <hook-picture-source src="http://placehold.it/600x150" media="(min-width: 600px)"></hook-picture-source>
         </hook-picture>
@@ -52,17 +60,17 @@
         <template>
 
           <h1>Regular Image</h1>
-          <hook-picture>
+          <hook-picture fallback-src="http://placehold.it/350x150">
             <hook-picture-source src="http://placehold.it/1000x150" media="(min-width: 1000px)"></hook-picture-source>
             <hook-picture-source src="http://placehold.it/600x150" media="(min-width: 600px)"></hook-picture-source>
-            <img src="http://placehold.it/350x150" alt="image" default>
+            <img alt="image">
           </hook-picture>
 
           <h1>Iron Image</h1>
-          <hook-picture>
+          <hook-picture fallback-src="http://placehold.it/350x150">
             <hook-picture-source src="http://placehold.it/1000x150" media="(min-width: 1000px)"></hook-picture-source>
             <hook-picture-source src="http://placehold.it/600x150" media="(min-width: 600px)"></hook-picture-source>
-            <iron-image preload fade src="http://placehold.it/350x150" alt="image" default></iron-image>
+            <iron-image preload fade alt="image"></iron-image>
           </hook-picture>
 
           <h1>Bound to variable.</h1>

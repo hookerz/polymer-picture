@@ -22,7 +22,7 @@ const compilesass = () => {
         sourceMapContents: true
       });
       dom5.removeAttribute(styleTag, 'lang');
-      dom5.setTextContent(styleTag, result.css);
+      dom5.setTextContent(styleTag, "\n" + result.css + "\n");
     });
     const str = parse5.serialize(doc);
     file.contents = new Buffer(str);

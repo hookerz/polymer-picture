@@ -42,7 +42,8 @@ Custom property | Description | Default
 
   <template>
 
-    <style>:host {
+    <style>
+:host {
   display: inherit;
   @apply (--hook-picture);
 }
@@ -51,7 +52,8 @@ Custom property | Description | Default
   display: none;
 }
 
-/*# sourceMappingURL=data:application/json;base64,ewoJInZlcnNpb24iOiAzLAoJImZpbGUiOiAic3RkaW4uY3NzIiwKCSJzb3VyY2VzIjogWwoJCSJzdGRpbiIKCV0sCgkic291cmNlc0NvbnRlbnQiOiBbCgkJIlxuXG4gICAgICA6aG9zdCB7XG4gICAgICAgIGRpc3BsYXk6IGluaGVyaXQ7XG4gICAgICAgIEBhcHBseSgtLWhvb2stcGljdHVyZSk7XG4gICAgICB9XG4gICAgICA6bm90KFtyZWFkeV0pOjpzbG90dGVkKCopIHtcbiAgICAgICAgZGlzcGxheTogbm9uZTtcbiAgICAgIH1cbiAgICAiCgldLAoJIm5hbWVzIjogW10sCgkibWFwcGluZ3MiOiAiQUFFTSxBQUFBLEtBQUssQ0FBQztFQUNKLE9BQU8sRUFBRSxPQUFPO0VBQ2hCLE1BQU0sQ0FBTixnQkFBTTtDQUNQOztBQUNELEFBQUEsSUFBSyxFQUFBLEFBQUEsQUFBQSxLQUFDLEFBQUEsRUFBTyxTQUFVLENBQUEsQUFBQSxDQUFDLEVBQUU7RUFDeEIsT0FBTyxFQUFFLElBQUk7Q0FDZCIKfQ== */</style>
+/*# sourceMappingURL=data:application/json;base64,ewoJInZlcnNpb24iOiAzLAoJImZpbGUiOiAic3RkaW4uY3NzIiwKCSJzb3VyY2VzIjogWwoJCSJzdGRpbiIKCV0sCgkic291cmNlc0NvbnRlbnQiOiBbCgkJIlxuXG4gICAgICA6aG9zdCB7XG4gICAgICAgIGRpc3BsYXk6IGluaGVyaXQ7XG4gICAgICAgIEBhcHBseSgtLWhvb2stcGljdHVyZSk7XG4gICAgICB9XG4gICAgICA6bm90KFtyZWFkeV0pOjpzbG90dGVkKCopIHtcbiAgICAgICAgZGlzcGxheTogbm9uZTtcbiAgICAgIH1cbiAgICAiCgldLAoJIm5hbWVzIjogW10sCgkibWFwcGluZ3MiOiAiQUFFTSxBQUFBLEtBQUssQ0FBQztFQUNKLE9BQU8sRUFBRSxPQUFPO0VBQ2hCLE1BQU0sQ0FBTixnQkFBTTtDQUNQOztBQUNELEFBQUEsSUFBSyxFQUFBLEFBQUEsQUFBQSxLQUFDLEFBQUEsRUFBTyxTQUFVLENBQUEsQUFBQSxDQUFDLEVBQUU7RUFDeEIsT0FBTyxFQUFFLElBQUk7Q0FDZCIKfQ== */
+</style>
 
     <slot id="slot" ready$="[[ready]]"></slot>
 
@@ -83,7 +85,7 @@ Custom property | Description | Default
             type: Boolean,
             value: false
           },
-          defaultSrc: {
+          fallbackSrc: {
             type: String,
             notify: true
           },
@@ -110,16 +112,16 @@ Custom property | Description | Default
           this._processRemovedNodes(info.removedNodes);
         });
         let nodes = Polymer.FlattenedNodesObserver.getFlattenedNodes(this.$.slot);
-        let defaultSrc = null;
+        let fallbackSrc = this.fallbackSrc;
         let otherNodes = HookPicture.getOtherNodes(nodes);
         for(let i = 0; i < otherNodes.length; i++) {
           let node = otherNodes[i];
           if(node.hasAttribute('src')) {
-            defaultSrc = node.src;
+            fallbackSrc = node.src;
           }
         }
-        if(defaultSrc !== null) {
-          this.defaultSrc = defaultSrc;
+        if(fallbackSrc !== null) {
+          this.fallbackSrc = fallbackSrc;
         }
         this._processNewNodes(nodes);
       }
@@ -133,6 +135,10 @@ Custom property | Description | Default
         Polymer.RenderStatus.beforeNextRender(this, this._calculateImagePath);
       }
 
+      /**
+      * Loop through the inner nodes and find the first media query that matches.
+      * If none match, use the fallback, if set.
+      */
       _calculateImagePath() {
         let activeNode = null;
         let nodes = HookPicture.getSourceNodes(this.nodes);
@@ -152,7 +158,7 @@ Custom property | Description | Default
         }
         else {
           this.setProperties({
-            src: this.defaultSrc,
+            src: this.fallbackSrc,
             activeNode: null,
             active: false
           });
@@ -161,8 +167,14 @@ Custom property | Description | Default
         var otherNodes = HookPicture.getOtherNodes(this.nodes);
         for(let i = 0; i < otherNodes.length; i++) {
           let node = otherNodes[i];
-          if(node.hasAttribute('src')) {
+
+          //set the source to the inner nodes.
+          if(this.src) {
             node.src = this.src;
+          }
+          //if the fallback isn't specified, we remove the src attribute off the node.
+          else {
+            node.removeAttribute('src');
           }
         }
       }
