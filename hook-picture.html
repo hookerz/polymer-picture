@@ -1,5 +1,6 @@
 <link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="../polymer/lib/utils/flattened-nodes-observer.html">
+<link rel="import" href="./hook-picture-source.html">
 <!--
 `<hook-picture>` is a picture element that mimics the HTML5 `<picture>` element.  Use iron-image, img or don't include an image to use a div with a background-image.  Just include what media queries you wish to use and the element will adjust to your needs.
 
@@ -46,9 +47,13 @@ Custom property | Description | Default
   @apply (--hook-picture);
 }
 
-/*# sourceMappingURL=data:application/json;base64,ewoJInZlcnNpb24iOiAzLAoJImZpbGUiOiAic3RkaW4uY3NzIiwKCSJzb3VyY2VzIjogWwoJCSJzdGRpbiIKCV0sCgkic291cmNlc0NvbnRlbnQiOiBbCgkJIlxuXG4gICAgICA6aG9zdCB7XG4gICAgICAgIGRpc3BsYXk6IGluaGVyaXQ7XG4gICAgICAgIEBhcHBseSgtLWhvb2stcGljdHVyZSk7XG4gICAgICB9XG5cbiAgICAiCgldLAoJIm5hbWVzIjogW10sCgkibWFwcGluZ3MiOiAiQUFFTSxBQUFBLEtBQUssQ0FBQztFQUNKLE9BQU8sRUFBRSxPQUFPO0VBQ2hCLE1BQU0sQ0FBTixnQkFBTTtDQUNQIgp9 */</style>
+:not([ready])::slotted(*) {
+  display: none;
+}
 
-    <slot id="slot"></slot>
+/*# sourceMappingURL=data:application/json;base64,ewoJInZlcnNpb24iOiAzLAoJImZpbGUiOiAic3RkaW4uY3NzIiwKCSJzb3VyY2VzIjogWwoJCSJzdGRpbiIKCV0sCgkic291cmNlc0NvbnRlbnQiOiBbCgkJIlxuXG4gICAgICA6aG9zdCB7XG4gICAgICAgIGRpc3BsYXk6IGluaGVyaXQ7XG4gICAgICAgIEBhcHBseSgtLWhvb2stcGljdHVyZSk7XG4gICAgICB9XG4gICAgICA6bm90KFtyZWFkeV0pOjpzbG90dGVkKCopIHtcbiAgICAgICAgZGlzcGxheTogbm9uZTtcbiAgICAgIH1cbiAgICAiCgldLAoJIm5hbWVzIjogW10sCgkibWFwcGluZ3MiOiAiQUFFTSxBQUFBLEtBQUssQ0FBQztFQUNKLE9BQU8sRUFBRSxPQUFPO0VBQ2hCLE1BQU0sQ0FBTixnQkFBTTtDQUNQOztBQUNELEFBQUEsSUFBSyxFQUFBLEFBQUEsQUFBQSxLQUFDLEFBQUEsRUFBTyxTQUFVLENBQUEsQUFBQSxDQUFDLEVBQUU7RUFDeEIsT0FBTyxFQUFFLElBQUk7Q0FDZCIKfQ== */</style>
+
+    <slot id="slot" ready$="[[ready]]"></slot>
 
   </template>
 
@@ -61,12 +66,37 @@ Custom property | Description | Default
       static get properties() {
         return {
           src: {
-            type: String
+            type: String,
+            notify: true,
+            reflectToAttribute: true
+          },
+          activeNode: {
+            type: Object,
+            notify: true
+          },
+          active: {
+            type: Boolean,
+            reflectToAttribute: true,
+            value: false
+          },
+          ready : {
+            type: Boolean,
+            value: false
+          },
+          defaultSrc: {
+            type: String,
+            notify: true
           },
           _boundQueryMatchHandler: {
             type: Function,
             value: function() {
               return this._queryMatchesChanged.bind(this);
+            }
+          },
+          nodes: {
+            type:Array,
+            value: () => {
+              return [];
             }
           }
         }
@@ -74,11 +104,23 @@ Custom property | Description | Default
 
       connectedCallback() {
         super.connectedCallback();
+        this.ready = true;
         this._observer = new Polymer.FlattenedNodesObserver(this.$.slot, (info) => {
           this._processNewNodes(info.addedNodes);
           this._processRemovedNodes(info.removedNodes);
         });
         let nodes = Polymer.FlattenedNodesObserver.getFlattenedNodes(this.$.slot);
+        let defaultSrc = null;
+        let otherNodes = HookPicture.getOtherNodes(nodes);
+        for(let i = 0; i < otherNodes.length; i++) {
+          let node = otherNodes[i];
+          if(node.hasAttribute('src')) {
+            defaultSrc = node.src;
+          }
+        }
+        if(defaultSrc !== null) {
+          this.defaultSrc = defaultSrc;
+        }
         this._processNewNodes(nodes);
       }
 
@@ -88,24 +130,86 @@ Custom property | Description | Default
       }
 
       _queryMatchesChanged() {
-        console.log('changed!');
+        Polymer.RenderStatus.beforeNextRender(this, this._calculateImagePath);
       }
 
+      _calculateImagePath() {
+        let activeNode = null;
+        let nodes = HookPicture.getSourceNodes(this.nodes);
+        for(let i = 0; i < nodes.length; i++) {
+          let node = nodes[i];
+          if(node.queryMatches) {
+            activeNode = node;
+            break;
+          }
+        }
+        if(activeNode) {
+          this.setProperties({
+            src: activeNode.src,
+            activeNode: activeNode,
+            active: true
+          });
+        }
+        else {
+          this.setProperties({
+            src: this.defaultSrc,
+            activeNode: null,
+            active: false
+          });
+        }
+
+        var otherNodes = HookPicture.getOtherNodes(this.nodes);
+        for(let i = 0; i < otherNodes.length; i++) {
+          let node = otherNodes[i];
+          if(node.hasAttribute('src')) {
+            node.src = this.src;
+          }
+        }
+      }
+
+      /*
+      * Processes newly added nodes and caches them. Only accepts Element nodes.
+      * Listens to the new nodes for query changes.
+      */
       _processNewNodes(nodes) {
-        nodes.filter(function(node) {
+         nodes.filter(function(node) {
           return (node.nodeType === Node.ELEMENT_NODE)
         }).forEach(function(node) {
-          console.log(node);
-          node.addEventListener('query-matches-changed', this._boundQueryMatchHandler);
+          if(node instanceof HookPictureSource) {
+            node.addEventListener('query-matches-changed', this._boundQueryMatchHandler);
+          }
+          this.nodes.push(node);
         }.bind(this));
+        this.notifyPath('nodes');
+        Polymer.RenderStatus.beforeNextRender(this, this._calculateImagePath);
       }
 
       _processRemovedNodes(nodes) {
         nodes.filter(function(node) {
           return (node.nodeType === Node.ELEMENT_NODE)
         }).forEach(function(node) {
-          node.removeEventListener('query-matches-changed', this._boundQueryMatchHandler);
+          if(node instanceof HookPictureSource) {
+            node.removeEventListener('query-matches-changed', this._boundQueryMatchHandler);
+          }
+          var index = this.nodes.indexOf(node);
+          if(index) {
+            this.nodes.splice(index, 1);
+          }
         }.bind(this));
+        this.notifyPath('nodes');
+        Polymer.RenderStatus.beforeNextRender(this, this._calculateImagePath);
+      }
+
+      static getSourceNodes(nodes) {
+        return nodes.filter(function(node) {
+          return (node.nodeType === Node.ELEMENT_NODE) && (node instanceof HookPictureSource)
+        })
+      }
+
+      static getOtherNodes(nodes) {
+        return nodes.filter(function(node) {
+          return (node.nodeType === Node.ELEMENT_NODE) && (!(node instanceof HookPictureSource))
+        })
       }
 
     }

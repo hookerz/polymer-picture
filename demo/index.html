@@ -8,14 +8,43 @@
 
     <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../iron-image/iron-image.html">
 
     <link rel="import" href="../hook-picture.html">
     <link rel="import" href="../hook-picture-source.html">
 
     <style is="custom-style" include="demo-pages-shared-styles">
+      [unresolved] {
+        display:none;
+      }
     </style>
   </head>
   <body>
+
+    <dom-module id="picture-test">
+      <template>
+        <hook-picture src="{{src}}">
+          <hook-picture-source src="http://placehold.it/1000x150" media="(min-width: 1000px)"></hook-picture-source>
+          <hook-picture-source src="http://placehold.it/600x150" media="(min-width: 600px)"></hook-picture-source>
+        </hook-picture>
+        <div style="">
+          [[src]]
+        </div>
+      </template>
+      <script>
+        class PictureTest extends Polymer.Element {
+          static get is() {
+            return 'picture-test';
+          }
+          static get properties() {
+            return {
+              src: String
+            }
+          }
+        }
+        window.customElements.define(PictureTest.is, PictureTest);
+      </script>
+    </dom-module>
 
     <div class="vertical-section-container">
       <h3>Basic hook-picture Demo</h3>
@@ -33,14 +62,11 @@
           <hook-picture>
             <hook-picture-source src="http://placehold.it/1000x150" media="(min-width: 1000px)"></hook-picture-source>
             <hook-picture-source src="http://placehold.it/600x150" media="(min-width: 600px)"></hook-picture-source>
-            <iron-image src="http://placehold.it/350x150" alt="image" default></iron-image>
+            <iron-image preload fade src="http://placehold.it/350x150" alt="image" default></iron-image>
           </hook-picture>
 
-          <h1>Background Image</h1>
-          <hook-picture src="http://placehold.it/350x150">
-            <hook-picture-source src="http://placehold.it/1000x150" media="(min-width: 1000px)"></hook-picture-source>
-            <hook-picture-source src="http://placehold.it/600x150" media="(min-width: 600px)"></hook-picture-source>
-          </hook-picture>
+          <h1>Bound to variable.</h1>
+          <picture-test></picture-test>
 
         </template>
       </demo-snippet>
