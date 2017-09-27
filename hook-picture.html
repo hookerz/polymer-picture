@@ -43,19 +43,17 @@ Custom property | Description | Default
   <template>
 
     <style>
-:host {
-  display: inherit;
-  @apply (--hook-picture);
-}
+      :host {
+        display: inherit;
+        @apply (--hook-picture);
+      }
 
-:not([ready])::slotted(*) {
-  display: none;
-}
+      :not([_ready])::slotted(*) {
+        display: none;
+      }
+    </style>
 
-/*# sourceMappingURL=data:application/json;base64,ewoJInZlcnNpb24iOiAzLAoJImZpbGUiOiAic3RkaW4uY3NzIiwKCSJzb3VyY2VzIjogWwoJCSJzdGRpbiIKCV0sCgkic291cmNlc0NvbnRlbnQiOiBbCgkJIlxuXG4gICAgICA6aG9zdCB7XG4gICAgICAgIGRpc3BsYXk6IGluaGVyaXQ7XG4gICAgICAgIEBhcHBseSgtLWhvb2stcGljdHVyZSk7XG4gICAgICB9XG4gICAgICA6bm90KFtyZWFkeV0pOjpzbG90dGVkKCopIHtcbiAgICAgICAgZGlzcGxheTogbm9uZTtcbiAgICAgIH1cbiAgICAiCgldLAoJIm5hbWVzIjogW10sCgkibWFwcGluZ3MiOiAiQUFFTSxBQUFBLEtBQUssQ0FBQztFQUNKLE9BQU8sRUFBRSxPQUFPO0VBQ2hCLE1BQU0sQ0FBTixnQkFBTTtDQUNQOztBQUNELEFBQUEsSUFBSyxFQUFBLEFBQUEsQUFBQSxLQUFDLEFBQUEsRUFBTyxTQUFVLENBQUEsQUFBQSxDQUFDLEVBQUU7RUFDeEIsT0FBTyxFQUFFLElBQUk7Q0FDZCIKfQ== */
-</style>
-
-    <slot id="slot" ready$="[[ready]]"></slot>
+    <slot id="slot" _ready$="[[_ready]]"></slot>
 
   </template>
 
@@ -81,7 +79,7 @@ Custom property | Description | Default
             reflectToAttribute: true,
             value: false
           },
-          ready : {
+          _ready : {
             type: Boolean,
             value: false
           },
@@ -106,7 +104,7 @@ Custom property | Description | Default
 
       connectedCallback() {
         super.connectedCallback();
-        this.ready = true;
+        this._ready = true;
         this._observer = new Polymer.FlattenedNodesObserver(this.$.slot, (info) => {
           this._processNewNodes(info.addedNodes);
           this._processRemovedNodes(info.removedNodes);
