@@ -5,8 +5,8 @@
   <template>
     <hook-media-query query="{{media}}" query-matches="{{queryMatches}}"></hook-media-query>
   </template>
-  <script>
-    class HookPictureSource extends Polymer.Element {
+  <script type="module">
+    export default class HookPictureSource extends Polymer.Element {
       static get is() {
         return 'hook-picture-source';
       }
