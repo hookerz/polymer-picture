@@ -1,5 +1,5 @@
-<script type="module">
-  export default class HookMediaQuery extends Polymer.Element {
+<script>
+  class HookMediaQuery extends Polymer.Element {
     static get is() {
       return 'hook-media-query';
     }
@@ -90,4 +90,5 @@
 
   }
   window.customElements.define(HookMediaQuery.is, HookMediaQuery);
+  window.HookMediaQuery = HookMediaQuery;
 </script>
